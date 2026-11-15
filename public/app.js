@@ -40,6 +40,10 @@ form.addEventListener('submit', async (e) => {
 
     conversationId = data.conversationId;
     localStorage.setItem('jordan_conversation_id', conversationId);
+
+    for (const d of data.delegaciones || []) {
+      addBubble(`→ ${d.empleado} resolvió: ${d.tarea}`, 'pending');
+    }
     addBubble(data.reply, 'jordan');
   } catch (err) {
     pending.remove();

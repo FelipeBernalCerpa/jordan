@@ -5,11 +5,13 @@ Orquestador de IA tipo Jarvis para el ecosistema Synaris/Ascend de Felipe. Fase 
 ## Qué incluye esta primera versión
 
 - `lib/jordan-persona.js` — el system prompt con la personalidad de Jordan (socio de negocios implacable, directo, informa en vez de pedir permiso de más).
+- `lib/employees.js` — el catálogo de empleados especializados (Código, Comercial, Financiero, Contenido, Voz), cada uno con su propia personalidad.
+- `lib/orchestrator.js` — **Jordan crea y coordina a los empleados en código, en tiempo real**: usa tool-use nativo de Claude para decidir si una tarea es de un empleado, lo invoca (otra llamada a Claude con la personalidad de ese empleado) y vuelve con la respuesta final ya conociendo el resultado. No hay repos ni servicios separados por empleado — todo vive en este mismo proyecto.
 - `supabase/schema.sql` — esquema de base de datos: `conversations`, `messages`, `knowledge_base`, `error_log`, `employees`.
-- `api/chat.js` — endpoint serverless (Vercel) que recibe un mensaje, consulta la base de conocimiento y los errores pasados, llama a Claude con la personalidad de Jordan, y guarda todo en Supabase.
-- `public/` — pantalla de chat mínima, mismo lenguaje visual oscuro/premium que el resto del diseño (fondo oscuro, acento azul, tipografía Space Grotesk/Inter/JetBrains Mono).
+- `api/chat.js` — endpoint serverless (Vercel) que recibe un mensaje, consulta la base de conocimiento y los errores pasados, orquesta la respuesta (Jordan + empleados si corresponde), y guarda todo en Supabase.
+- `public/` — pantalla de chat mínima, mismo lenguaje visual oscuro/premium que el resto del diseño. Si Jordan delegó algo, se ve como un paso intermedio antes de su respuesta final.
 
-Lo que **no** está en esta versión (próximos pasos): búsqueda semántica real en la base de conocimiento (hoy es un match por palabra clave), el modo de voz, y que Jordan efectivamente delegue tareas a los empleados especializados.
+Lo que **no** está en esta versión (próximos pasos): búsqueda semántica real en la base de conocimiento (hoy es un match por palabra clave) y el modo de voz.
 
 ## Cómo levantarlo
 

@@ -1,8 +1,5 @@
-const Anthropic = require('@anthropic-ai/sdk');
 const { getSupabase } = require('../lib/supabase');
-const { JORDAN_SYSTEM_PROMPT } = require('../lib/jordan-persona');
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const { orquestar } = require('../lib/orchestrator');
 
 // Búsqueda simple por palabra clave en la base de conocimiento.
 // TODO (fase 2): reemplazar por búsqueda semántica con embeddings (columna `embedding` ya existe en el esquema).
@@ -81,23 +78,20 @@ module.exports = async function handler(req, res) {
         errores.map((e) => `- En "${e.context}" falló: ${e.what_failed}. Lección: ${e.lesson || 'sin lección registrada'}`).join('\n');
     }
 
-    // 4. Llamar a Claude con la personalidad de Jordan
-    const respuesta = await anthropic.messages.create({
-      model: 'claude-sonnet-5',
-      max_tokens: 1024,
-      system: JORDAN_SYSTEM_PROMPT + contexto,
-      messages: [{ role: 'user', content: message }],
-    });
+    // 4. Orquestar: Jordan decide si delega a un empleado (y lo invoca él mismo, en código)
+    const { texto, delegaciones } = await orquestar(message, contexto);
 
-    const texto = respuesta.content
-      .filter((b) => b.type === 'text')
-      .map((b) => b.text)
-      .join('\n');
-
-    // 5. Guardar la respuesta de Jordan
+    // 5. Guardar cada delegación como su propio mensaje, y luego la respuesta final de Jordan
+    for (const d of delegaciones) {
+      await supabase.from('messages').insert({
+        conversation_id: convoId,
+        role: 'employee',
+        content: `[${d.empleado}] tarea: ${d.tarea}\n\n${d.resultado}`,
+      });
+    }
     await supabase.from('messages').insert({ conversation_id: convoId, role: 'jordan', content: texto });
 
-    return res.status(200).json({ conversationId: convoId, reply: texto });
+    return res.status(200).json({ conversationId: convoId, reply: texto, delegaciones });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message || 'Error interno' });
