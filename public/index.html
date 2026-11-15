@@ -21,6 +21,9 @@
   header .dot{width:6px; height:6px; border-radius:50%; background:var(--green)}
   header .title{font-size:15px; font-weight:600}
   header .status{font-size:11px; color:var(--green)}
+  header nav{margin-left:auto; display:flex; gap:14px}
+  header nav a{color:var(--ink2); text-decoration:none; font-size:12px}
+  header nav a:hover{color:var(--hub)}
 
   #log{flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:10px}
   .bubble{max-width:70%; padding:11px 15px; border-radius:16px; font-size:13.5px; line-height:1.45}
@@ -42,6 +45,10 @@
       <div class="head title">Jordan</div>
       <div class="mono status">CONECTADO</div>
     </div>
+    <nav>
+      <a href="/voice.html">voz</a>
+      <a href="/knowledge.html">conocimiento</a>
+    </nav>
   </header>
 
   <div id="log"></div>

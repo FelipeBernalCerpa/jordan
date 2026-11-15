@@ -11,7 +11,10 @@ Orquestador de IA tipo Jarvis para el ecosistema Synaris/Ascend de Felipe. Fase 
 - `api/chat.js` — endpoint serverless (Vercel) que recibe un mensaje, consulta la base de conocimiento y los errores pasados, orquesta la respuesta (Jordan + empleados si corresponde), y guarda todo en Supabase.
 - `public/` — pantalla de chat mínima, mismo lenguaje visual oscuro/premium que el resto del diseño. Si Jordan delegó algo, se ve como un paso intermedio antes de su respuesta final.
 
-Lo que **no** está en esta versión (próximos pasos): búsqueda semántica real en la base de conocimiento (hoy es un match por palabra clave) y el modo de voz.
+- `api/knowledge.js` + `public/knowledge.html` — pantalla para agregar, ver y borrar entradas de la base de conocimiento de verdad (antes la tabla existía pero no había forma de alimentarla).
+- `public/voice.html` — modo de voz real: usa el reconocimiento y la síntesis de voz nativos del navegador (Web Speech API, sin necesitar ninguna llave de terceros), conectado al mismo `/api/chat`. Funciona en Chrome de escritorio/Android; en navegadores sin soporte muestra un aviso y redirige al chat de texto.
+
+Lo que **no** está en esta versión (próximos pasos): búsqueda semántica real en la base de conocimiento (hoy es un match por palabra clave) y el despliegue en Vercel (bloqueado por permisos de la cuenta — ver conversación).
 
 ## Cómo levantarlo
 
