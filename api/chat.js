@@ -78,8 +78,10 @@ module.exports = async function handler(req, res) {
         errores.map((e) => `- En "${e.context}" falló: ${e.what_failed}. Lección: ${e.lesson || 'sin lección registrada'}`).join('\n');
     }
 
-    // 4. Orquestar: Jordan decide si delega a un empleado (y lo invoca él mismo, en código)
-    const { texto, delegaciones } = await orquestar(message, contexto);
+    // 4. Orquestar: Jordan decide si delega a un empleado, busca en internet,
+    //    o usa Calendar/Gmail de verdad — y lo ejecuta él mismo, en código.
+    const efectivoUserId = userId || '00000000-0000-0000-0000-000000000000';
+    const { texto, delegaciones } = await orquestar(message, contexto, efectivoUserId);
 
     // 5. Guardar cada delegación como su propio mensaje, y luego la respuesta final de Jordan
     for (const d of delegaciones) {

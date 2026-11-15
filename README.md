@@ -13,6 +13,7 @@ Orquestador de IA tipo Jarvis para el ecosistema Synaris/Ascend de Felipe. Fase 
 
 - `api/knowledge.js` + `public/knowledge.html` — pantalla para agregar, ver y borrar entradas de la base de conocimiento de verdad (antes la tabla existía pero no había forma de alimentarla).
 - `public/voice.html` — modo de voz real: usa el reconocimiento y la síntesis de voz nativos del navegador (Web Speech API, sin necesitar ninguna llave de terceros), conectado al mismo `/api/chat`. Funciona en Chrome de escritorio/Android; en navegadores sin soporte muestra un aviso y redirige al chat de texto.
+- **Acceso real a Google Calendar y Gmail**: `lib/google-auth.js` maneja el OAuth, `lib/tools/calendar.js` y `lib/tools/gmail.js` son las funciones reales (crear/listar eventos, buscar/enviar correos), y `lib/orchestrator.js` se las da a Jordan como herramientas que puede ejecutar de verdad — no solo mencionar. `/api/auth/google` inicia la conexión (botón "conectar Google" en la pantalla principal).
 
 Lo que **no** está en esta versión (próximos pasos): búsqueda semántica real en la base de conocimiento (hoy es un match por palabra clave) y el despliegue en Vercel (bloqueado por permisos de la cuenta — ver conversación).
 
@@ -22,9 +23,10 @@ Lo que **no** está en esta versión (próximos pasos): búsqueda semántica rea
 2. **Copia `.env.example` a `.env.local`** y rellena:
    - `ANTHROPIC_API_KEY` — tu llave de la API de Claude.
    - `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` — del panel de tu proyecto en Supabase (Settings → API).
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` / `GOOGLE_REDIRECT_URI` — solo si quieres que Jordan use Calendar/Gmail de verdad. Se crean en [console.cloud.google.com](https://console.cloud.google.com) → "APIs & Services" → "Credentials" → "Create Credentials" → "OAuth client ID" → tipo "Web application". Habilita también la Calendar API y la Gmail API en "APIs & Services" → "Library". El redirect URI debe coincidir exactamente con `GOOGLE_REDIRECT_URI`.
 3. **Instala dependencias**: `npm install`
 4. **Corre localmente**: `npx vercel dev` (necesita la CLI de Vercel; si no la tienes, `npm i -g vercel` primero).
-5. Abre `http://localhost:3000` y escríbele a Jordan.
+5. Abre `http://localhost:3000` y escríbele a Jordan. Para conectar Google, entra a `/api/auth/google`.
 
 ## Desplegar
 
@@ -32,4 +34,4 @@ Lo que **no** está en esta versión (próximos pasos): búsqueda semántica rea
 vercel
 ```
 
-Y agrega las mismas variables de entorno (`ANTHROPIC_API_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) en el panel de Vercel → Settings → Environment Variables.
+Y agrega las mismas variables de entorno en el panel de Vercel → Settings → Environment Variables (y actualiza `GOOGLE_REDIRECT_URI` a la URL real de producción, ej. `https://jordan-tuusuario.vercel.app/api/auth/google-callback`, y regístrala también en Google Cloud Console).
