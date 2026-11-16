@@ -56,18 +56,21 @@ create table if not exists error_log (
 create index if not exists idx_messages_conversation on messages(conversation_id, created_at);
 create index if not exists idx_knowledge_base_updated on knowledge_base(updated_at desc);
 
--- Conexiones reales a apps externas (Google Calendar, Gmail, ...).
--- Un registro por proveedor por usuario. Los tokens quedan acá para que
--- las funciones de los empleados puedan actuar de verdad en esas apps.
+-- Conexiones reales a apps externas (Google Calendar/Gmail/Drive/YouTube, ...).
+-- Permite MÁS DE UNA cuenta por proveedor (ej: tu Gmail personal y el de
+-- negocio) — se distinguen por account_email. label es un apodo opcional
+-- ("personal", "negocio") para que Jordan sepa a cuál te refieres.
 create table if not exists integrations (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null,
   provider text not null check (provider in ('google')),
+  account_email text,
+  label text,
   access_token text not null,
   refresh_token text,
   scope text,
   expiry_date bigint,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  unique (user_id, provider)
+  unique (user_id, provider, account_email)
 );
